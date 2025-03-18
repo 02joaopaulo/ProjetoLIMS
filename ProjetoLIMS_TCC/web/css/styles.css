@@ -35,7 +35,7 @@ nav a{
 nav a:hover{
     color: yellow;
     font-family: Arial;
-        
+     
 }
 
 nav p {
@@ -48,6 +48,10 @@ main{
     padding: 10px;
     background-color: #ededed;
     font-family: Arial;
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 77vh; /* Altura do main para centralização vertical */
 }
 footer{
     text-align: right;
@@ -55,6 +59,7 @@ footer{
     background-color: #79acb5;
     padding: 10px;
     display: flex;
+    justify-content: center;
     font-family: Arial;
 }
 iframe{
@@ -69,4 +74,28 @@ form p {
     width: 20%;
     margin-bottom: 20px;
     font-family: Arial;
+}
+
+form {
+    display: flex;
+    flex-direction: column; /* Organiza os elementos em coluna */
+    align-items: center; /* Centraliza os elementos dentro do form */
+    padding: 50px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial;
+}
+label {
+    margin-bottom: 5px; /* Distância entre o rótulo e a caixa de entrada */
+}
+input {
+    margin-bottom: 10px; /* Aumento da distância entre as caixas de entrada */
+    padding: 10px;
+    width: 90%;
+    max-width: 300px;
+}
+button {
+    padding: 10px 20px;
 }
