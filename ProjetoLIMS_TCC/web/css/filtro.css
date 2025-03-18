@@ -1,0 +1,57 @@
+.button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filter-container {
+    display: flex;
+    width: 60%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.filter-group label {
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+.filter-group input, .filter-group select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px; /* Define um tamanho consistente */
+    height: 38px; /* Altura consistente */
+    box-sizing: border-box; /* Inclui padding e border no tamanho total */
+}
+
+.filter-container button {
+    background-color: #008080;
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-container button:hover {
+    background-color: #005f5f;
+}

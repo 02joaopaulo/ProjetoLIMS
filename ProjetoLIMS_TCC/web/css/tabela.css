@@ -1,0 +1,84 @@
+/* Formatação da Tabela */
+.table-container {
+    max-height: 400px; /* Ajuste a altura conforme necessário */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+th {
+    background-color: #008080;
+    color: white;
+    text-align: left;
+    padding: 5px 10px;
+    font-family: Arial;
+}
+
+td {
+    padding: 5px 10px;
+    font-family: Arial;
+}
+
+table {
+    width: 90%;
+    background-color: background;
+    border: solid #ddd 1px;
+    border-spacing: 10px;
+    padding: 10px;
+}
+
+/* Botão Criar Novo Item */
+.button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #005f5f;
+}
+
+/* Formulário de Filtros */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-container label {
+    margin-bottom: 5px;
+    font-family: Arial;
+    font-size: 14px;
+}
+
+.filter-container input, .filter-container button {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px; /* Define uma largura uniforme para todos os inputs */
+}
+
+.filter-container input {
+    max-width: 300px; /* Restringe o tamanho máximo */
+}
+
+/* Estilização Específica do Campo Data */
+.filter-container input[type="date"] {
+    width: 200px; /* Mantém o mesmo tamanho dos outros campos */
+}

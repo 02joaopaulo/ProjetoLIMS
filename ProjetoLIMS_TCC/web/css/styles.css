@@ -1,0 +1,72 @@
+* {
+    margin: 0 auto
+    
+}
+header{
+    width: 400px;
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: Arial;
+}
+
+header img {
+    width: 200px; /* Ajuste o valor conforme necessário */
+    height: auto; /* Mantém a proporção da imagem */
+}
+
+nav{
+    width: 90%;
+    background-color: #076373;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    font-family: Arial;
+}
+
+nav a{
+    color: white;
+    text-decoration: none;
+    font-family: Arial;
+}
+
+nav a:hover{
+    color: yellow;
+    font-family: Arial;
+        
+}
+
+nav p {
+    color: white; /* Define a cor do texto como branco */
+}
+
+main{
+    width: 90%;
+    height: 700px;
+    padding: 10px;
+    background-color: #ededed;
+    font-family: Arial;
+}
+footer{
+    text-align: right;
+    width: 90%;
+    background-color: #79acb5;
+    padding: 10px;
+    display: flex;
+    font-family: Arial;
+}
+iframe{
+    border: 0px;
+    width: 100%;
+    height: 700px;
+    font-family: Arial;
+}
+form p {
+    display: flex;
+    align-items: center;
+    width: 20%;
+    margin-bottom: 20px;
+    font-family: Arial;
+}

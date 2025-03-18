@@ -1,0 +1,58 @@
+table{
+    width: 100%;
+    background-color: background;
+    border: solid #ddd 1px;
+    border-spacing: 10px;
+    padding: 10px
+}
+
+.table-container {
+    max-height: 400px; /* Ajuste a altura conforme necessário */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+*{
+    margin: 0 auto
+}
+
+th{
+    background-color: #008080;
+    color: white;
+    text-align: left;
+    padding: 5px 10px;
+    font-family: Arial;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+td{
+    padding: 5px 10px;
+    font-family: Arial;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+button {
+    padding: 10px 20px;
+}
+
+form label, form input, form select, form button {
+    font-family: Arial, sans-serif;
+}
+
+form input[type="text"], form select {
+    width: 145px; /* Ajuste o valor conforme necessário */
+    padding: 5px; /* Espaçamento interno */
+    margin-right: 10px; /* Espaçamento entre os campos */
+}
+
+form button {
+    padding: 5px 10px; /* Espaçamento interno do botão */
+    font-family: Arial, sans-serif;
+}
