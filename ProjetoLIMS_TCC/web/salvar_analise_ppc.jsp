@@ -1,0 +1,59 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Timestamp"%>
+<%@page import="java.time.LocalDateTime"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Salvar Análise de PPC</title>
+</head>
+<body>
+<%
+String idAmostra = request.getParameter("idamostra");
+String responsavelAnalise = request.getParameter("responsavelanalise");
+double massaCadinho, massaAmostra, massaCalcinada, ppc;
+Timestamp dataHoraAnalise;
+
+try {
+    massaCadinho = Double.parseDouble(request.getParameter("massacadinho"));
+    massaAmostra = Double.parseDouble(request.getParameter("massaamostra"));
+    massaCalcinada = Double.parseDouble(request.getParameter("massacalcinada"));
+
+    // Calcular o PPC
+    ppc = (1 - ((massaCalcinada - massaCadinho) / massaAmostra)) * 100;
+
+    // Obter a data/hora atual para o registro da análise
+    dataHoraAnalise = Timestamp.valueOf(LocalDateTime.now());
+
+    // Conectar ao banco de dados
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    try (Connection conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
+         PreparedStatement st = conecta.prepareStatement("INSERT INTO analise_ppc (idamostra, massacadinho, massaamostra, massacalcinada, ppc, responsavelanalise, datahoraanalise) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+
+        // Inserir os dados da análise de umidade no banco de dados
+        st.setString(1, idAmostra);
+        st.setDouble(2, massaCadinho);
+        st.setDouble(3, massaAmostra);
+        st.setDouble(4, massaCalcinada);
+        st.setDouble(5, ppc);
+        st.setString(6, responsavelAnalise);
+        st.setTimestamp(7, dataHoraAnalise);
+        st.executeUpdate();
+    }
+    
+    response.sendRedirect("liberacao.jsp");
+
+} catch (NumberFormatException e) {
+    out.print("Erro ao converter um dos valores de massa: " + e.getMessage());
+    e.printStackTrace();
+} catch (Exception e) {
+    out.print("Erro na transmissão para o MySQL: " + e.getMessage());
+    e.printStackTrace();
+}
+%>
+</body>
+</html>
