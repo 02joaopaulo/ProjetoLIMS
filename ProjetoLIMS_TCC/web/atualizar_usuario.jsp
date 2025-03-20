@@ -11,19 +11,16 @@
     <body>
         <%
             try {
-                // Parâmetros recebidos do formulário de edição
                 String idUsuario = request.getParameter("idusuario");
                 String usuario = request.getParameter("usuario");
                 String senha = request.getParameter("senha");
                 String perfil = request.getParameter("perfil");
 
-                // Conectar ao banco de dados
                 Connection conecta;
                 PreparedStatement st;
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
-                // Atualizar os dados no banco de dados
                 String sql = "UPDATE usuario SET usuario = ?, senha = ?, perfil = ? WHERE idusuario = ?";
                 st = conecta.prepareStatement(sql);
                 st.setString(1, usuario);
@@ -33,12 +30,11 @@
                 int rowsUpdated = st.executeUpdate();
 
                 if (rowsUpdated > 0) {
-                    response.sendRedirect("usuarios.jsp"); // Redirecionar para a tela de consulta de usuários
+                    response.sendRedirect("usuarios.jsp");
                 } else {
                     out.print("Falha ao atualizar o usuário.");
                 }
 
-                // Fechar a conexão
                 st.close();
                 conecta.close();
             } catch (Exception e) {
