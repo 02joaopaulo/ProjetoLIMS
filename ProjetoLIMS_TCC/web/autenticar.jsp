@@ -4,7 +4,7 @@
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     String usuario = request.getParameter("usuario");
     String senha = request.getParameter("senha");
@@ -16,7 +16,7 @@
         Class.forName("com.mysql.cj.jdbc.Driver");
         conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
-        // Verificar as credenciais do usuário
+        // Verificar as credenciais do usuÃ¡rio
         st = conecta.prepareStatement("SELECT idusuario, idperfil FROM usuario WHERE usuario=? AND senha=?");
         st.setString(1, usuario);
         st.setString(2, senha);
@@ -39,19 +39,19 @@
 
                 session.setAttribute("usuario", usuario);
                 session.setAttribute("telas", telas);
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("menu.jsp");
             } else {
-                out.println("Perfil não encontrado.");
+                out.println("Perfil nÃ£o encontrado.");
             }
         } else {
-            out.println("Usuário ou senha inválidos.");
+            out.println("UsuÃ¡rio ou senha invÃ¡lidos.");
         }
 
-        // Fechar a conexão
+        // Fechar a conexÃ£o
         st.close();
         conecta.close();
     } catch (Exception e) {
-        out.print("Erro na transmissão para o mySQL: " + e.getMessage());
+        out.print("Erro na transmissÃ£o para o mySQL: " + e.getMessage());
         e.printStackTrace();
     }
 %>
