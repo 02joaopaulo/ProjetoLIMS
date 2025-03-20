@@ -56,7 +56,7 @@
             <tr>
                 <td><%= idUsuario %></td>
                 <td><%= usuario %></td>
-                <td>******</td>
+                <td>******</td> <!-- Exibir senha como asteriscos -->
                 <td><%= perfil %></td>
                 <td>
                     <button onclick="window.location.href='editar_usuario.jsp?idusuario=<%= idUsuario %>&usuario=<%= usuario %>&senha=<%= senha %>&perfil=<%= perfil %>'">Editar</button>
@@ -71,6 +71,7 @@
             %>
         </table>
         <%
+                // Fechar a conexão
                 rsPerfil.close();
                 stPerfil.close();
                 rs.close();

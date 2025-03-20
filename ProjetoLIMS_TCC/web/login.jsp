@@ -5,14 +5,14 @@
     List<String> telas = (List<String>) session.getAttribute("telas");
 
     if (usuario == null || telas == null) {
-        response.sendRedirect("menu.jsp");
+        response.sendRedirect("login.jsp");
         return;
     }
 %>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Menu - LIMS</title>
+        <title>Login - LIMS</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/styles.css"/>
