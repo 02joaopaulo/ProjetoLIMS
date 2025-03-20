@@ -16,7 +16,7 @@
         Class.forName("com.mysql.cj.jdbc.Driver");
         conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
-        // Verificar as credenciais do usuário
+        // Verificar as credenciais do usuÃ¡rio
         st = conecta.prepareStatement("SELECT idusuario, idperfil FROM usuario WHERE usuario=? AND senha=?");
         st.setString(1, usuario);
         st.setString(2, senha);
@@ -44,10 +44,10 @@
                 out.println("Perfil não encontrado.");
             }
         } else {
-            out.println("Usuário ou senha inválidos.");
+            out.println("Usuario ou senha invalidos.");
         }
 
-        // Fechar a conexão
+        // Fechar a conexao
         st.close();
         conecta.close();
     } catch (Exception e) {

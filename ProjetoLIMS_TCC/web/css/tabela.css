@@ -1,14 +1,25 @@
 /* Formatação da Tabela */
 .table-container {
-    max-height: 400px; /* Ajuste a altura conforme necessário */
+    display: flex; /* Define o container como flexbox */
+    justify-content: center; /* Centraliza o conteúdo dentro do container */
+    max-height: 400px; /* Ajusta a altura conforme necessário */
     overflow-y: auto;
     border: 1px solid #ccc;
+}
+
+table {
+    width: 90%; /* Define a largura da tabela */
+    background-color: background;
+    border: solid #ddd 1px;
+    border-spacing: 10px;
+    padding: 10px;
+    margin: 0; /* Remove qualquer margem externa que possa estar afetando */
 }
 
 th {
     background-color: #008080;
     color: white;
-    text-align: left;
+    text-align: left; /* Mantém o alinhamento do texto */
     padding: 5px 10px;
     font-family: Arial;
 }
@@ -16,14 +27,6 @@ th {
 td {
     padding: 5px 10px;
     font-family: Arial;
-}
-
-table {
-    width: 90%;
-    background-color: background;
-    border: solid #ddd 1px;
-    border-spacing: 10px;
-    padding: 10px;
 }
 
 /* Botão Criar Novo Item */
