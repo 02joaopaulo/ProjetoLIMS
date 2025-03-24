@@ -16,10 +16,11 @@
         <main>
             <form action="autenticar.jsp" method="post">
                 <label for="usuario">Usuário:</label>
-                <input type="text" id="usuario" name="usuario" required><br><br>
+                <input type="text" id="usuario" name="usuario" placeholder="Digite seu usuário" required><br><br>
                 <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="senha" required><br><br>
-                <button type="submit">Acessar</button>
+                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required minlength="8"><br><br>
+                <button type="submit">Acessar</button><br>
+                <a href="criar_usuario.jsp">Criar uma nova conta</a>
             </form>
         </main>
         <footer>
@@ -27,4 +28,3 @@
         </footer>
     </body>
 </html>
-

@@ -1,10 +1,19 @@
 <%@page import="java.util.List"%>
+<%@page import="java.util.Arrays"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     String usuario = (String) session.getAttribute("usuario");
-    List<String> telas = (List<String>) session.getAttribute("telas");
+    String perfil = String.valueOf(session.getAttribute("perfil"));
+    Object telasObj = session.getAttribute("telas");
 
-    if (usuario == null || telas == null) {
+    List<String> telas = null;
+    if (telasObj instanceof String[]) {
+        telas = Arrays.asList((String[]) telasObj);
+    } else if (telasObj instanceof List) {
+        telas = (List<String>) telasObj;
+    }
+
+    if (usuario == null || telas == null || perfil == null) {
         response.sendRedirect("menu.jsp");
         return;
     }

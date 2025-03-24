@@ -18,7 +18,7 @@
                     <label for="editUsuario">Usuário:</label>
                     <input type="text" id="editUsuario" name="usuario" value="<%= request.getParameter("usuario") %>" required>
                     <label for="editSenha">Senha:</label>
-                    <input type="password" id="editSenha" name="senha" value="<%= request.getParameter("senha") %>" required>
+                    <input type="password" id="editSenha" name="senha" placeholder="Digite nova senha ou mantenha a atual" required>
                     <label for="editPerfil">Perfil:</label>
                     <select id="editPerfil" name="perfil" required>
                         <%
