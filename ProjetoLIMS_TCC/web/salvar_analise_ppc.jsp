@@ -17,6 +17,11 @@ String idAmostra = request.getParameter("idamostra");
 String responsavelAnalise = request.getParameter("responsavelanalise");
 double massaCadinho, massaAmostra, massaCalcinada, ppc;
 Timestamp dataHoraAnalise;
+LocalDateTime dataHoraLog = LocalDateTime.now();
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+// Capturando o usuário logado
+String usuarioLogado = (String) session.getAttribute("usuario");
 
 try {
     massaCadinho = Double.parseDouble(request.getParameter("massacadinho"));
@@ -34,7 +39,7 @@ try {
     try (Connection conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
          PreparedStatement st = conecta.prepareStatement("INSERT INTO analise_ppc (idamostra, massacadinho, massaamostra, massacalcinada, ppc, responsavelanalise, datahoraanalise) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 
-        // Inserir os dados da análise de umidade no banco de dados
+        // Inserir os dados da análise
         st.setString(1, idAmostra);
         st.setDouble(2, massaCadinho);
         st.setDouble(3, massaAmostra);
@@ -44,7 +49,25 @@ try {
         st.setTimestamp(7, dataHoraAnalise);
         st.executeUpdate();
     }
-    
+
+    // Registrar log
+    try (Connection conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
+         PreparedStatement logSt = conecta.prepareStatement(
+             "INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)")) {
+
+        logSt.setString(1, "analise_ppc");
+        logSt.setString(2, "Análise PPC registrada para amostra " + idAmostra);
+
+        if (usuarioLogado != null && !usuarioLogado.isEmpty()) {
+            logSt.setString(3, usuarioLogado);
+        } else {
+            logSt.setString(3, "Usuário desconhecido");
+        }
+
+        logSt.setString(4, dataHoraLog.format(formatter));
+        logSt.executeUpdate();
+    }
+
     response.sendRedirect("liberacao.jsp");
 
 } catch (NumberFormatException e) {

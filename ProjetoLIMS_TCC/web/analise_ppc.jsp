@@ -15,10 +15,6 @@
             const massaAmostra = parseFloat(document.getElementById("massaamostra").value);
             const massaCalcinada = parseFloat(document.getElementById("massacalcinada").value);
 
-            console.log("Massa do Cadinho: " + massaCadinho);
-            console.log("Massa da Amostra: " + massaAmostra);
-            console.log("Massa Calcinada: " + massaCalcinada);
-
             if (!isNaN(massaCadinho) && !isNaN(massaAmostra) && !isNaN(massaCalcinada)) {
                 const ppc = (1 - ((massaCalcinada - massaCadinho) / massaAmostra)) * 100;
                 document.getElementById("ppc").textContent = ppc.toFixed(2) + "%";
@@ -72,7 +68,6 @@
                             }
                         } catch (Exception e) {
                             out.print("Erro ao consultar usuários: " + e.getMessage());
-                            e.printStackTrace();
                         } finally {
                             if (rs != null) rs.close();
                             if (st != null) st.close();

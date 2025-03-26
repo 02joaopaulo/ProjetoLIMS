@@ -1,15 +1,20 @@
-<%@page import="com.mysql.cj.protocol.Resultset"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Consulta de Usuários</title>
         <link rel="stylesheet" href="css/tabela.css"/>
+        <script>
+            // Função para exibir uma caixa de confirmação antes de excluir
+            function confirmarExclusao(usuario) {
+                return confirm("Tem certeza que deseja excluir o usuário: " + usuario + "?");
+            }
+        </script>
     </head>
     <body>
         <main>
@@ -55,14 +60,15 @@
                         String perfil = rs.getString("perfil");
                 %>
                 <tr>
-                    <td><%= idUsuario%></td>
-                    <td><%= usuario%></td>
+                    <td><%= idUsuario %></td>
+                    <td><%= usuario %></td>
                     <td>******</td>
-                    <td><%= perfil%></td>
+                    <td><%= perfil %></td>
                     <td>
-                        <button onclick="window.location.href = 'editar_usuario.jsp?idusuario=<%= idUsuario%>&usuario=<%= usuario%>&senha=<%= senha%>&perfil=<%= perfil%>'">Editar</button>
-                        <form action="excluir_usuario.jsp" method="post" style="display:inline;">
-                            <input type="hidden" name="idusuario" value="<%= idUsuario%>">
+                        <button onclick="window.location.href = 'editar_usuario.jsp?idusuario=<%= idUsuario %>&usuario=<%= usuario %>&senha=<%= senha %>&perfil=<%= perfil %>'">Editar</button>
+                        <form action="excluir_usuario.jsp" method="post" style="display:inline;" onsubmit="return confirmarExclusao('<%= usuario %>');">
+                            <input type="hidden" name="idusuario" value="<%= idUsuario %>">
+                            <input type="hidden" name="usuario" value="<%= usuario %>">
                             <button type="submit">Excluir</button>
                         </form>
                     </td>
@@ -78,7 +84,7 @@
                     st.close();
                     conecta.close();
                 } catch (Exception e) {
-                    out.print("Erro na transmissão para o mySQL: " + e.getMessage());
+                    out.print("Erro na transmissão para o MySQL: " + e.getMessage());
                     e.printStackTrace();
                 }
             %>

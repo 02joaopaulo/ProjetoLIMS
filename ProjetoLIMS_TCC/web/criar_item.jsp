@@ -3,6 +3,8 @@
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Timestamp"%>
+<%@page import="java.time.LocalDateTime"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,7 +18,7 @@
                 try {
                     // Conectar ao banco de dados
                     Connection conecta;
-                    PreparedStatement st;
+                    PreparedStatement st, logSt;
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
@@ -35,8 +37,17 @@
                     st.setString(5, usuarioResponsavel);
                     st.executeUpdate();
 
-                    // Fechar a conexão
+                    // Registrar log da criação
+                    logSt = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
+                    logSt.setString(1, "criar_item.jsp");
+                    logSt.setString(2, "Item criado: " + nome);
+                    logSt.setString(3, usuarioResponsavel);
+                    logSt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                    logSt.executeUpdate();
+
+                    // Fechar conexões
                     st.close();
+                    logSt.close();
                     conecta.close();
 
                     // Redirecionar para a tela de estoque
@@ -61,7 +72,7 @@
         %>
         <div class="form-container">
             <div class="form-box">
-                <form action="criar_item.jsp" method="post">
+                <form action="Estoque" method="post">
                     <label for="nome">Nome:</label>
                     <input type="text" id="nome" name="nome" required>
                     <label for="categoria_id">Categoria:</label>

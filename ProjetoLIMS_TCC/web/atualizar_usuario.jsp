@@ -35,19 +35,27 @@
         // Atualizar o usuário no banco de dados
         st = conecta.prepareStatement("UPDATE usuario SET usuario = ?, senha = ?, perfil = ?, idperfil = ? WHERE idusuario = ?");
         st.setString(1, usuario);
-        st.setString(2, senhaHash); // Armazenar a senha criptografada
+        st.setString(2, senhaHash);
         st.setString(3, perfil);
         st.setInt(4, idperfil);
         st.setString(5, idusuario);
 
         int rowsUpdated = st.executeUpdate();
         if (rowsUpdated > 0) {
-            response.sendRedirect("usuarios.jsp"); // Redirecionar para a lista de usuários
+            // Registrar no log
+            PreparedStatement stLog = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
+            stLog.setString(1, "usuarios");
+            stLog.setString(2, "Editado o usuário " + usuario);
+            stLog.setString(3, session.getAttribute("usuario").toString());
+            stLog.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+            stLog.executeUpdate();
+            stLog.close();
+
+            response.sendRedirect("usuarios.jsp");
         } else {
             out.println("Erro ao atualizar o usuário. Tente novamente.");
         }
 
-        // Fechar as conexões
         st.close();
         rsPerfil.close();
         stPerfil.close();

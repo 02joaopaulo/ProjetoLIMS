@@ -3,6 +3,8 @@
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Timestamp"%>
+<%@page import="java.time.LocalDateTime"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,7 +14,6 @@
     </head>
     <body>
         <%
-            // Inicializar as variáveis para evitar erros
             String data = "";
             String quantidadeAtual = "";
             String usuarioResponsavel = "";
@@ -21,7 +22,7 @@
                 try {
                     // Conectar ao banco de dados
                     Connection conecta;
-                    PreparedStatement st;
+                    PreparedStatement st, logSt;
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
@@ -54,12 +55,21 @@
                     st.setInt(7, id);
                     st.executeUpdate();
 
-                    // Fechar a conexão
+                    // Registrar log da atualização
+                    logSt = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
+                    logSt.setString(1, "atualizar_item.jsp");
+                    logSt.setString(2, "Item atualizado: ID " + id + ", Nome: " + nome);
+                    logSt.setString(3, usuarioResponsavel);
+                    logSt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                    logSt.executeUpdate();
+
+                    // Fechar as conexões
                     st.close();
+                    logSt.close();
                     conecta.close();
 
                     // Redirecionar para a tela de estoque
-                    response.sendRedirect("estoque.jsp");
+                    response.sendRedirect("Estoque");
                 } catch (Exception e) {
                     out.print("Erro ao atualizar item: " + e.getMessage());
                     e.printStackTrace();
@@ -74,7 +84,7 @@
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
                     stCategoria = conecta.prepareStatement("SELECT idcategoria, nome FROM categorias");
                     rsCategoria = stCategoria.executeQuery();
-                    
+
                     stUsuario = conecta.prepareStatement("SELECT usuario FROM usuario WHERE perfil = 'analista'");
                     rsUsuario = stUsuario.executeQuery();
 

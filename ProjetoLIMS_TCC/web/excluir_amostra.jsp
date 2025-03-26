@@ -2,6 +2,9 @@
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Timestamp"%>
+<%@page import="java.time.LocalDateTime"%>
+<%@page import="java.time.format.DateTimeFormatter"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +14,10 @@
 <body>
 <%
 String idAmostra = request.getParameter("idamostra");
+// Capturando o usuário logado da sessão
+String usuarioLogado = (String) session.getAttribute("usuario"); 
+LocalDateTime dataHoraLog = LocalDateTime.now();
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 try {
     // Conectar ao banco de dados
@@ -24,11 +31,29 @@ try {
     st.setInt(1, Integer.parseInt(idAmostra));
     st.executeUpdate();
 
-    response.sendRedirect("consulta.jsp");
+    // Inserir registro no log
+    PreparedStatement logSt = conecta.prepareStatement(
+        "INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
+    logSt.setString(1, "Consulta");
+    logSt.setString(2, "Exclusão da amostra com idamostra: " + idAmostra);
+    
+    // Verificando se o usuário logado não está nulo
+    if (usuarioLogado != null && !usuarioLogado.isEmpty()) {
+        logSt.setString(3, usuarioLogado);
+    } else {
+        logSt.setString(3, "Usuário desconhecido");
+    }
+    
+    logSt.setString(4, dataHoraLog.format(formatter));
+    logSt.executeUpdate();
 
-    // Fechar a conexão
+    // Fechar o PreparedStatement e a conexão
+    logSt.close();
     st.close();
     conecta.close();
+
+    response.sendRedirect("consulta.jsp");
+
 } catch (Exception e) {
     out.print("Erro na exclusão da amostra: " + e.getMessage());
     e.printStackTrace();

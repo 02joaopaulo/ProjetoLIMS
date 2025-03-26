@@ -21,8 +21,8 @@
                 document.getElementById("resultado_fe").textContent = fe.toFixed(2);
                 document.getElementById("resultado_sio2").textContent = sio2.toFixed(2);
                 document.getElementById("resultado_al2o3").textContent = al2o3.toFixed(2);
-                document.getElementById("resultado_p").textContent = p.toFixed(2);
-                document.getElementById("resultado_mn").textContent = mn.toFixed(2);
+                document.getElementById("resultado_p").textContent = p.toFixed(3);
+                document.getElementById("resultado_mn").textContent = mn.toFixed(3);
                 document.getElementById("btnSalvar").disabled = false;
             } else {
                 alert("Por favor, preencha todos os campos de entrada.");
@@ -83,7 +83,6 @@
                             }
                         } catch (Exception e) {
                             out.print("Erro ao consultar usuários: " + e.getMessage());
-                            e.printStackTrace();
                         } finally {
                             if (rs != null) rs.close();
                             if (st != null) st.close();

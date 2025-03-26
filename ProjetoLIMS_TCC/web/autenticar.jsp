@@ -1,12 +1,11 @@
 <%@page import="java.security.MessageDigest"%>
 <%@page import="java.util.Base64"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
-<%@page contentType="text/html" pageEncoding="ISO-8859-1"%>
 <%
     String usuario = request.getParameter("usuario");
     String senha = request.getParameter("senha");
@@ -23,10 +22,10 @@
         Class.forName("com.mysql.cj.jdbc.Driver");
         conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
-        // Verificar as credenciais do usuário (com senha criptografada)
+        // Verificar as credenciais do usuário
         st = conecta.prepareStatement("SELECT idusuario, idperfil FROM usuario WHERE usuario=? AND senha=?");
         st.setString(1, usuario);
-        st.setString(2, senhaCriptografada); // Comparar com a senha criptografada armazenada no banco
+        st.setString(2, senhaCriptografada);
         ResultSet rs = st.executeQuery();
 
         if (rs.next()) {
@@ -47,7 +46,17 @@
                 // Configurar os atributos na sessão
                 session.setAttribute("usuario", usuario);
                 session.setAttribute("telas", telas);
-                response.sendRedirect("menu.jsp"); // Redirecionar para o menu principal
+
+                // Registrar no log
+                PreparedStatement stLog = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
+                stLog.setString(1, "Login");
+                stLog.setString(2, "Efetuado o login pelo usuário " + usuario);
+                stLog.setString(3, usuario);
+                stLog.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+                stLog.executeUpdate();
+                stLog.close();
+
+                response.sendRedirect("menu.jsp");
             } else {
                 out.println("Perfil não encontrado.");
             }
@@ -55,7 +64,6 @@
             out.println("Usuário ou senha inválidos.");
         }
 
-        // Fechar a conexão
         st.close();
         conecta.close();
     } catch (Exception e) {
