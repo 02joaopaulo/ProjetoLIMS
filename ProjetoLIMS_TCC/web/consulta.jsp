@@ -4,8 +4,7 @@
 <%@page import="java.sql.DriverManager"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.Timestamp"%>
-<%@page import="java.time.LocalDateTime"%>
-<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.sql.ResultSet"%>
 <!DOCTYPE html>
 <html>
@@ -20,26 +19,26 @@
         <form method="get" action="" class="filter-container">
             <div class="filter-group">
                 <label for="nomeamostra">Nome da Amostra:</label>
-                <input type="text" id="nomeamostra" name="nomeamostra" value="<%= request.getParameter("nomeamostra") != null ? request.getParameter("nomeamostra") : "" %>">
-            </div>a
+                <input type="text" id="nomeamostra" name="nomeamostra" value="<%= request.getParameter("nomeamostra") != null ? request.getParameter("nomeamostra") : ""%>">
+            </div>
 
             <div class="filter-group">
                 <label for="datahoraamostra">Data da Amostra:</label>
-                <input type="date" id="datahoraamostra" name="datahoraamostra" value="<%= request.getParameter("datahoraamostra") != null ? request.getParameter("datahoraamostra") : "" %>">
+                <input type="date" id="datahoraamostra" name="datahoraamostra" value="<%= request.getParameter("datahoraamostra") != null ? request.getParameter("datahoraamostra") : ""%>">
             </div>
 
             <div class="filter-group">
                 <label for="cliente">Cliente:</label>
-                <input type="text" id="cliente" name="cliente" value="<%= request.getParameter("cliente") != null ? request.getParameter("cliente") : "" %>">
+                <input type="text" id="cliente" name="cliente" value="<%= request.getParameter("cliente") != null ? request.getParameter("cliente") : ""%>">
             </div>
 
             <div class="filter-group">
                 <label for="situacao">Situação:</label>
                 <select id="situacao" name="situacao">
                     <option value="">Selecione</option>
-                    <option value="Recebida" <%= "Recebida".equals(request.getParameter("situacao")) ? "selected" : "" %>>Recebida</option>
-                    <option value="Em análise" <%= "Em análise".equals(request.getParameter("situacao")) ? "selected" : "" %>>Em análise</option>
-                    <option value="Liberado" <%= "Liberado".equals(request.getParameter("situacao")) ? "selected" : "" %>>Liberado</option>
+                    <option value="Recebida" <%= "Recebida".equals(request.getParameter("situacao")) ? "selected" : ""%>>Recebida</option>
+                    <option value="Em análise" <%= "Em análise".equals(request.getParameter("situacao")) ? "selected" : ""%>>Em análise</option>
+                    <option value="Liberado" <%= "Liberado".equals(request.getParameter("situacao")) ? "selected" : ""%>>Liberado</option>
                 </select>
             </div>
 
@@ -100,16 +99,17 @@
                 <th>Nome Amostra</th>
                 <th>Data/Hora da Amostra</th>
                 <th>Cliente</th>
-                <th>Analise</th>
+                <th>Análise</th>
                 <th>Situação</th>
                 <th>Ações</th>
             </tr>
             <%
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
                 while (rs.next()) {
                     String analise = rs.getString("analise");
                     String idAmostra = rs.getString("idamostra");
 
-                    // Verificar se a amostra está liberada na tabela relatorio_analise
+                    // Verificar se a amostra está liberada na tabela relatorio_analises
                     stLib = conecta.prepareStatement("SELECT liberado FROM relatorio_analises WHERE idamostra = ?");
                     stLib.setString(1, idAmostra);
                     ResultSet rsLib = stLib.executeQuery();
@@ -130,22 +130,26 @@
 
                     rsLib.close();
                     stLib.close();
+
+                    // Formatar a data/hora
+                    Timestamp dataHoraTimestamp = rs.getTimestamp("datahoraamostra");
+                    String dataHoraFormatada = dataHoraTimestamp != null ? formatter.format(dataHoraTimestamp) : "-";
             %>
             <tr>
                 <td><%= rs.getInt("idamostra")%></td>
                 <td><%= rs.getString("nomeamostra")%></td>
-                <td><%= rs.getTimestamp("datahoraamostra")%></td>
+                <td><%= dataHoraFormatada%></td>
                 <td><%= rs.getString("Cliente")%></td>
-                <td><%= analise %></td>
-                <td><%= situacao %></td>
+                <td><%= analise%></td>
+                <td><%= situacao%></td>
                 <td>
-                    <% if (!"Liberado".equals(situacao)) { %>
-                    <form action="analise_<%= analise %>.jsp" method="post" style="display:inline;">
-                        <input type="hidden" name="idamostra" value="<%= idAmostra %>">
+                    <% if (!"Liberado".equals(situacao)) {%>
+                    <form action="analise_<%= analise%>.jsp" method="post" style="display:inline;">
+                        <input type="hidden" name="idamostra" value="<%= idAmostra%>">
                         <button type="submit">Analisar</button>
                     </form>
                     <form action="excluir_amostra.jsp" method="post" style="display:inline;">
-                        <input type="hidden" name="idamostra" value="<%= idAmostra %>">
+                        <input type="hidden" name="idamostra" value="<%= idAmostra%>">
                         <button type="submit">Excluir</button>
                     </form>
                     <% } %>
