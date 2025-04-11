@@ -4,7 +4,6 @@
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Timestamp"%>
-<%@page import="java.time.LocalDateTime"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,12 +12,12 @@
         <title>Criar Item</title>
     </head>
     <body>
-        <%
+        <% 
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 try {
                     // Conectar ao banco de dados
                     Connection conecta;
-                    PreparedStatement st, logSt;
+                    PreparedStatement st, stLog;
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
@@ -27,7 +26,7 @@
                     int categoriaId = Integer.parseInt(request.getParameter("categoria_id"));
                     String data = request.getParameter("data");
                     int quantidade = Integer.parseInt(request.getParameter("quantidade"));
-                    String usuarioResponsavel = request.getParameter("usuario_responsavel");
+                    String usuarioResponsavel = (String) session.getAttribute("usuario"); // Usuário da sessão
 
                     st = conecta.prepareStatement("INSERT INTO estoque (nome, categoria_id, data, quantidade, usuario_responsavel) VALUES (?, ?, ?, ?, ?)");
                     st.setString(1, nome);
@@ -37,17 +36,17 @@
                     st.setString(5, usuarioResponsavel);
                     st.executeUpdate();
 
-                    // Registrar log da criação
-                    logSt = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
-                    logSt.setString(1, "criar_item.jsp");
-                    logSt.setString(2, "Item criado: " + nome);
-                    logSt.setString(3, usuarioResponsavel);
-                    logSt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
-                    logSt.executeUpdate();
+                    // Registrar o log
+                    String logSql = "INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)";
+                    stLog = conecta.prepareStatement(logSql);
+                    stLog.setString(1, "estoque");
+                    stLog.setString(2, "Criado item: " + nome);
+                    stLog.setString(3, usuarioResponsavel);
+                    stLog.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+                    stLog.executeUpdate();
 
-                    // Fechar conexões
+                    stLog.close();
                     st.close();
-                    logSt.close();
                     conecta.close();
 
                     // Redirecionar para a tela de estoque
@@ -66,13 +65,13 @@
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
                     stCategoria = conecta.prepareStatement("SELECT idcategoria, nome FROM categorias");
                     rsCategoria = stCategoria.executeQuery();
-                    
+
                     stUsuario = conecta.prepareStatement("SELECT usuario FROM usuario WHERE perfil = 'analista'");
                     rsUsuario = stUsuario.executeQuery();
         %>
         <div class="form-container">
             <div class="form-box">
-                <form action="Estoque" method="post">
+                <form action="criar_item.jsp" method="post">
                     <label for="nome">Nome:</label>
                     <input type="text" id="nome" name="nome" required>
                     <label for="categoria_id">Categoria:</label>

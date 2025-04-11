@@ -36,7 +36,7 @@
         String logSQL = "INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)";
         logSt = conecta.prepareStatement(logSQL);
         logSt.setString(1, "Liberação");
-        logSt.setString(2, "Realizado o" + acao + " para amostra de ID " + idAmostra);
+        logSt.setString(2, "Realizado o " + acao + " para amostra de ID " + idAmostra);
         if (usuarioLogado != null && !usuarioLogado.isEmpty()) {
             logSt.setString(3, usuarioLogado);
         } else {

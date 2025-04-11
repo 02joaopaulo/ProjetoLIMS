@@ -4,147 +4,126 @@
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Timestamp"%>
-<%@page import="java.time.LocalDateTime"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/usuario.css"/>
-        <title>Atualizar Item</title>
+        <title>Atualizar Item de Estoque</title>
     </head>
     <body>
-        <%
-            String data = "";
-            String quantidadeAtual = "";
-            String usuarioResponsavel = "";
-
+        <% 
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 try {
                     // Conectar ao banco de dados
                     Connection conecta;
-                    PreparedStatement st, logSt;
+                    PreparedStatement stSelect, stUpdate, stLog;
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
 
-                    // Atualizar item no banco de dados
+                    // Capturar a quantidade atual antes da atualização
                     int id = Integer.parseInt(request.getParameter("id"));
                     String nome = request.getParameter("nome");
                     int categoriaId = Integer.parseInt(request.getParameter("categoria_id"));
-                    data = request.getParameter("data");
-                    quantidadeAtual = request.getParameter("quantidade_atual");
-                    usuarioResponsavel = request.getParameter("usuario_responsavel");
+                    String data = request.getParameter("data");
+                    int novaQuantidade = Integer.parseInt(request.getParameter("quantidade"));
+                    String usuarioResponsavel = (String) session.getAttribute("usuario"); // Usuário da sessão
 
-                    // Consultar a quantidade anterior
                     int quantidadeAnterior = 0;
-                    st = conecta.prepareStatement("SELECT quantidade FROM estoque WHERE id = ?");
-                    st.setInt(1, id);
-                    ResultSet rs = st.executeQuery();
+
+                    String selectSql = "SELECT quantidade FROM estoque WHERE id = ?";
+                    stSelect = conecta.prepareStatement(selectSql);
+                    stSelect.setInt(1, id);
+                    ResultSet rs = stSelect.executeQuery();
                     if (rs.next()) {
                         quantidadeAnterior = rs.getInt("quantidade");
                     }
                     rs.close();
+                    stSelect.close();
 
-                    // Atualizar quantidade_anterior e demais campos
-                    st = conecta.prepareStatement("UPDATE estoque SET nome = ?, categoria_id = ?, data = ?, quantidade_anterior = ?, quantidade = ?, usuario_responsavel = ? WHERE id = ?");
-                    st.setString(1, nome);
-                    st.setInt(2, categoriaId);
-                    st.setString(3, data);
-                    st.setInt(4, quantidadeAnterior);
-                    st.setInt(5, Integer.parseInt(quantidadeAtual));
-                    st.setString(6, usuarioResponsavel);
-                    st.setInt(7, id);
-                    st.executeUpdate();
+                    // Atualizar o item no banco de dados, incluindo a quantidade anterior
+                    String updateSql = "UPDATE estoque SET nome = ?, categoria_id = ?, data = ?, quantidade_anterior = ?, quantidade = ?, usuario_responsavel = ? WHERE id = ?";
+                    stUpdate = conecta.prepareStatement(updateSql);
+                    stUpdate.setString(1, nome);
+                    stUpdate.setInt(2, categoriaId);
+                    stUpdate.setString(3, data);
+                    stUpdate.setInt(4, quantidadeAnterior);
+                    stUpdate.setInt(5, novaQuantidade);
+                    stUpdate.setString(6, usuarioResponsavel);
+                    stUpdate.setInt(7, id);
+                    stUpdate.executeUpdate();
 
-                    // Registrar log da atualização
-                    logSt = conecta.prepareStatement("INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)");
-                    logSt.setString(1, "atualizar_item.jsp");
-                    logSt.setString(2, "Item atualizado: ID " + id + ", Nome: " + nome);
-                    logSt.setString(3, usuarioResponsavel);
-                    logSt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
-                    logSt.executeUpdate();
+                    // Registrar o log
+                    String logSql = "INSERT INTO logs (tela, acao, usuario, datahoralog) VALUES (?, ?, ?, ?)";
+                    stLog = conecta.prepareStatement(logSql);
+                    stLog.setString(1, "estoque");
+                    stLog.setString(2, "Atualizado item: " + nome + " | Quantidade anterior: " + quantidadeAnterior + " | Nova quantidade: " + novaQuantidade);
+                    stLog.setString(3, usuarioResponsavel);
+                    stLog.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+                    stLog.executeUpdate();
 
-                    // Fechar as conexões
-                    st.close();
-                    logSt.close();
+                    stLog.close();
+                    stUpdate.close();
                     conecta.close();
 
                     // Redirecionar para a tela de estoque
-                    response.sendRedirect("Estoque");
+                    response.sendRedirect("estoque.jsp");
                 } catch (Exception e) {
                     out.print("Erro ao atualizar item: " + e.getMessage());
                     e.printStackTrace();
                 }
             } else {
-                // Consultar categorias e usuários disponíveis
-                Connection conecta;
-                PreparedStatement stCategoria, stUsuario;
-                ResultSet rsCategoria, rsUsuario;
-                try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
-                    stCategoria = conecta.prepareStatement("SELECT idcategoria, nome FROM categorias");
-                    rsCategoria = stCategoria.executeQuery();
-
-                    stUsuario = conecta.prepareStatement("SELECT usuario FROM usuario WHERE perfil = 'analista'");
-                    rsUsuario = stUsuario.executeQuery();
-
-                    // Obter os parâmetros da URL
-                    int id = Integer.parseInt(request.getParameter("id"));
-                    String nome = request.getParameter("nome");
-                    String categoria = request.getParameter("categoria");
-                    data = request.getParameter("data");
-                    quantidadeAtual = request.getParameter("quantidade_atual");
-                    usuarioResponsavel = request.getParameter("usuario_responsavel");
         %>
         <div class="form-container">
             <div class="form-box">
-                <form action="atualizar_item.jsp" method="post">
-                    <input type="hidden" id="id" name="id" value="<%= id %>">
+                <form method="post" action="atualizar_item.jsp">
+                    <input type="hidden" name="id" value="<%= request.getParameter("id") %>">
+                    
                     <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" value="<%= nome %>" required>
+                    <input type="text" id="nome" name="nome" value="<%= request.getParameter("nome") %>" required>
+
                     <label for="categoria_id">Categoria:</label>
                     <select id="categoria_id" name="categoria_id" required>
-                        <%
-                            while (rsCategoria.next()) {
-                                int categoriaId = rsCategoria.getInt("idcategoria");
-                                String categoriaNome = rsCategoria.getString("nome");
-                                String selected = categoriaNome.equals(categoria) ? "selected" : "";
+                        <% 
+                            try {
+                                // Conexão para buscar categorias
+                                Connection conecta;
+                                PreparedStatement st;
+                                ResultSet rs;
+                                Class.forName("com.mysql.cj.jdbc.Driver");
+                                conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/projeto_lims", "root", "joao.santos");
+                                st = conecta.prepareStatement("SELECT idcategoria, nome FROM categorias");
+                                rs = st.executeQuery();
+                                while (rs.next()) {
+                                    int categoriaId = rs.getInt("idcategoria");
+                                    String categoriaNome = rs.getString("nome");
                         %>
-                        <option value="<%= categoriaId %>" <%= selected %>><%= categoriaNome %></option>
-                        <%
+                        <option value="<%= categoriaId %>" <%= categoriaId == Integer.parseInt(request.getParameter("categoria_id")) ? "selected" : "" %>><%= categoriaNome %></option>
+                        <% 
+                                }
+                                rs.close();
+                                st.close();
+                                conecta.close();
+                            } catch (Exception e) {
+                                out.print("Erro ao consultar categorias: " + e.getMessage());
+                                e.printStackTrace();
                             }
                         %>
                     </select>
+
                     <label for="data">Data:</label>
-                    <input type="date" id="data" name="data" value="<%= data %>" required>
-                    <label for="quantidade_atual">Quantidade Atual:</label>
-                    <input type="number" id="quantidade_atual" name="quantidade_atual" value="<%= quantidadeAtual %>" required>
+                    <input type="date" id="data" name="data" value="<%= request.getParameter("data") %>" required>
+
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" name="quantidade" value="<%= request.getParameter("quantidade") %>" required>
+
                     <label for="usuario_responsavel">Usuário Responsável:</label>
-                    <select id="usuario_responsavel" name="usuario_responsavel" required>
-                        <%
-                            while (rsUsuario.next()) {
-                                String usuario = rsUsuario.getString("usuario");
-                        %>
-                        <option value="<%= usuario %>"><%= usuario %></option>
-                        <%
-                            }
-                            rsCategoria.close();
-                            stCategoria.close();
-                            rsUsuario.close();
-                            stUsuario.close();
-                            conecta.close();
-                        } catch (Exception e) {
-                            out.print("Erro ao consultar categorias ou usuários: " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                        %>
-                    </select>
-                    <button type="submit">Atualizar</button>
+                    <input type="text" id="usuario_responsavel" name="usuario_responsavel" value="<%= (String) session.getAttribute("usuario") %>" readonly>
+
+                    <button type="submit">Salvar</button>
                 </form>
             </div>
         </div>
-        <%
-            }
-        %>
+        <% } %>
     </body>
 </html>

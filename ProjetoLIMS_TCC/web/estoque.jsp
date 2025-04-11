@@ -127,10 +127,9 @@
                 <td><%= quantidadeAtual %></td>
                 <td><%= usuarioResponsavel %></td>
                 <td>
-                    <button onclick="window.location.href = 'atualizar_item.jsp?id=<%= id %>&nome=<%= nome %>&categoria=<%= categoria %>&data=<%= dataFormatada %>&quantidade_atual=<%= quantidadeAtual %>&usuario_responsavel=<%= usuarioResponsavel %>'">Atualizar</button>
+                    <button onclick="window.location.href = 'atualizar_item.jsp?id=<%= id %>&nome=<%= nome %>&categoria=<%= categoria %>&data=<%= dataBanco %>&quantidade_anterior=<%= quantidadeAnterior %>&quantidade_atual=<%= quantidadeAtual %>&usuario_responsavel=<%= usuarioResponsavel %>'">Atualizar</button>
                     <form action="excluir_item.jsp" method="post" style="display:inline;">
                         <input type="hidden" name="id" value="<%= id %>">
-                        <input type="hidden" name="usuario_responsavel" value="<%= usuarioResponsavel %>">
                         <button type="submit">Excluir</button>
                     </form>
                 </td>
